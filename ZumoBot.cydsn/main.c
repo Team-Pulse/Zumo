@@ -28,25 +28,8 @@
     I2C, UART, Serial<br>
     </p>
 */
-
-#include <project.h>
-#include <stdio.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include "Motor.h"
-#include "Ultra.h"
-#include "Nunchuk.h"
-#include "Reflectance.h"
-#include "Gyro.h"
-#include "Accel_magnet.h"
-#include "LSM303D.h"
-#include "IR.h"
-#include "Beep.h"
-#include "mqtt_sender.h"
-#include <time.h>
-#include <sys/time.h>
-#include "serial1.h"
-#include <unistd.h>
+#include "Jukkis.h"
+#include "Roni.h"
 /**
  * @file    main.c
  * @brief   
@@ -54,6 +37,36 @@
 */
 
 #if 1
+
+        void zmain(void){
+            
+            motor_start();
+            motor_forward(0,0);
+            motor_forward(100,3500);
+            motor_forward(0,0);
+            motor_turn(200, 0, 260);
+            motor_forward(0,0);
+            motor_forward(100,2800);
+            motor_turn(200, 0, 260);
+            motor_forward(100,2700);
+            motor_turn(200, 0, 260);
+            motor_forward(0,0);
+            motor_turn(100, 80, 2500);
+            motor_forward(100,900);
+            motor_stop();
+            
+            while(true)
+            {
+                vTaskDelay(100);
+            
+            }
+        
+        }
+        
+    
+#endif
+
+#if 0
 // Hello World!
 void zmain(void)
 {
@@ -210,6 +223,7 @@ void zmain(void)
 
 
 #if 0
+    
 //ultrasonic sensor//
 void zmain(void)
 {
