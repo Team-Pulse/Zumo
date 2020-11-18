@@ -55,7 +55,7 @@ void JukkisPrint(void){
         
 #endif
         
-#if 1
+#if 0
     
 //ultrasonic sensor//
 void zmain(void)

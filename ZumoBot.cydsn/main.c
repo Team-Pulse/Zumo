@@ -38,6 +38,24 @@
 */
 
 #if 0
+// Week 4 Assignment 2
+void zmain(void)
+{
+    week4_assignment2();
+}
+    
+#endif
+
+#if 1
+// Week 4 Assignment 3
+void zmain(void)
+{
+    week4_assignment3();
+}
+    
+#endif
+
+#if 0
 
         void zmain(void){
             
