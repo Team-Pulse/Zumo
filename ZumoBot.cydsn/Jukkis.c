@@ -22,3 +22,33 @@ void JukkisPrint(void){
 
 
 }
+
+#if 0
+
+        void zmain(void){
+            
+            motor_start();
+            motor_forward(0,0);
+            motor_forward(100,3500);
+            motor_forward(0,0);
+            motor_turn(200, 0, 260);
+            motor_forward(0,0);
+            motor_forward(100,2800);
+            motor_turn(200, 0, 260);
+            motor_forward(100,2700);
+            motor_turn(200, 0, 260);
+            motor_forward(0,0);
+            motor_turn(100, 80, 2500);
+            motor_forward(100,900);
+            motor_stop();
+            
+            while(true)
+            {
+                vTaskDelay(100);
+            
+            }
+        
+        }
+        
+    
+#endif
