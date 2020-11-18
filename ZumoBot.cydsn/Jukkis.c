@@ -72,6 +72,8 @@ void zmain(void)
         if (d < 10){
             motor_forward(0,0);
             vTaskDelay(1000);
+            motor_backward(100, 1000);
+            tank_turn(random_number(40, 120),20,1000);
         }
         vTaskDelay(200);
     }
@@ -79,8 +81,20 @@ void zmain(void)
 
 void tank_turn(uint8 l_speed, uint8 r_speed, uint32 delay){
     SetMotors(0,1, l_speed, r_speed, delay);
+    r_speed = 20;
 }
-
+int random_number(int min, int max)  
+                             
+{ 
+    int distance, anyRandom, x;
+    distance = max-min;
+    anyRandom = rand();
+    
+    x = anyRandom % distance;
+    return (x+min);
+    
+    /*From scale 90* - 270 * = min 40 -> 120*/
+} 
 
 #endif
 
