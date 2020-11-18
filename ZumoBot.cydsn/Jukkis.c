@@ -12,6 +12,7 @@
 #include "Jukkis.h"
 /* [] END OF FILE */
 
+#if 0
 void JukkisPrint(void){
     printf("Cool story, bro\n");
     
@@ -22,8 +23,10 @@ void JukkisPrint(void){
 
 
 }
+#endif
 
-#if 0
+#if 0 Week2:Assignment1
+    
 
         void zmain(void){
             
@@ -50,5 +53,21 @@ void JukkisPrint(void){
         
         }
         
+#endif
+        
+#if 0
     
+//ultrasonic sensor//
+void zmain(void)
+{
+    Ultra_Start();                          // Ultra Sonic Start function
+    
+    while(true) {
+        int d = Ultra_GetDistance();
+        // Print the detected distance (centimeters)
+        printf("distance = %d\r\n", d);
+        vTaskDelay(200);
+    }
+}  
+
 #endif
