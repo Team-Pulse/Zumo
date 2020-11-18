@@ -31,3 +31,5 @@
 
 void JukkisPrint(void);
 /* [] END OF FILE */
+
+void tank_turn(uint8 l_speed, uint8 r_speed, uint32 delay);

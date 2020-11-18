@@ -25,7 +25,7 @@ void JukkisPrint(void){
 }
 #endif
 
-#if 0 Week2:Assignment1
+#if 0 //Week2:Assignment1
     
 
         void zmain(void){
@@ -55,19 +55,33 @@ void JukkisPrint(void){
         
 #endif
         
-#if 0
+#if 1
     
 //ultrasonic sensor//
 void zmain(void)
 {
-    Ultra_Start();                          // Ultra Sonic Start function
-    
+    Ultra_Start();    // Ultra Sonic Start function
+    motor_start();
+    vTaskDelay(100);
+
     while(true) {
         int d = Ultra_GetDistance();
+        motor_forward(100,1);
         // Print the detected distance (centimeters)
         printf("distance = %d\r\n", d);
+        if (d < 10){
+            motor_forward(0,0);
+            vTaskDelay(1000);
+        }
         vTaskDelay(200);
     }
 }  
 
+void tank_turn(uint8 l_speed, uint8 r_speed, uint32 delay){
+    SetMotors(0,1, l_speed, r_speed, delay);
+}
+
+
 #endif
+
+
