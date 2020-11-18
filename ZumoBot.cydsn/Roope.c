@@ -40,7 +40,7 @@ void roopePrint(void)
 }
 #endif
 
-#if 1
+#if 0
 //IR receiverm - how to wait for IR remote commands
 void zmain(void)
 {
