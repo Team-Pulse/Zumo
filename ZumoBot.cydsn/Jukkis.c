@@ -54,8 +54,29 @@ void JukkisPrint(void){
         }
         
 #endif
-        
-#if 1
+#if 0
+void zmain(void) //Week3 assignment2
+{
+    Ultra_Start();    // Ultra Sonic Start function
+    motor_start();
+    vTaskDelay(100);
+
+    while(true) {
+        int d = Ultra_GetDistance();
+        motor_forward(100,1);
+        // Print the detected distance (centimeters)
+        printf("distance = %d\r\n", d);
+        if (d < 10){
+            motor_forward(0,0);
+            vTaskDelay(1000);
+            motor_backward(100, 1000);
+        }
+        vTaskDelay(200);
+    }
+}  
+
+#endif  
+#if 0
     
 //ultrasonic sensor//
 void zmain(void)
