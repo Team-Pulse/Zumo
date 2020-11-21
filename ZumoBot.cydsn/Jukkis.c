@@ -119,4 +119,36 @@ int random_number(int min, int max)
 
 #endif
 
+#if 1
+      void zmain(void)
+{
+    motor_start();
+    IR_Start();
+    struct sensors_ dig;
+    
+    reflectance_start();
+    reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
+    
+    while(SW1_Read());
+    BatteryLed_Write(1);
+    vTaskDelay(1000);
+    BatteryLed_Write(0);
+    
+    motor_forward(100, 0);
+    
+    reflectance_digital(&dig);
+    
+    while(dig.L3 == 0 && dig.R3 == 0){
+            
+        reflectance_digital(&dig);
+            
+    }
+    motor_forward(0,0);
+    
+    while(true)
+    {
+        vTaskDelay(100);
+    }
+}   
 
+#endif
