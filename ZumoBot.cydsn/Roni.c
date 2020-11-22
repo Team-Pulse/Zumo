@@ -9,6 +9,7 @@
  *
  * ========================================
 */
+#if 0
 #include "Roni.h"
 /* [] END OF FILE */
 
@@ -93,3 +94,5 @@ void week4_assignment3(void)
         }
     }
 }
+
+#endif

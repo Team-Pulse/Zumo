@@ -25,10 +25,10 @@ void JukkisPrint(void){
 }
 #endif
 
-#if 0 //Week2:Assignment1
+#if 0 //Week3:Assignment1
     
 
-        void zmain(void){
+        void Wee3_Assignment1(void){
             
             motor_start();
             motor_forward(0,0);
@@ -54,9 +54,9 @@ void JukkisPrint(void){
         }
         
 #endif
-<<<<<<< HEAD
+
         
-=======
+
 #if 0
 void zmain(void) //Week3 assignment2
 {
@@ -79,10 +79,10 @@ void zmain(void) //Week3 assignment2
 }  
 
 #endif  
->>>>>>> f9a8f8cc9004d947566e4d40d7132ab797be178a
+
 #if 0
     
-//ultrasonic sensor//
+//week3 assignment3
 void zmain(void)
 {
     Ultra_Start();    // Ultra Sonic Start function
@@ -131,120 +131,79 @@ int random_number(int min, int max)
 
     struct sensors_ dig;
     _Bool black = 0;
+    _Bool on_white = 0;
     int count = 0;
+
+        
+ 
     
     motor_start();
     IR_Start();
     reflectance_start();
     reflectance_set_threshold(14000, 9000, 11000, 11000, 9000, 14000); // set center sensor threshold to 11000 and others to 9000
     
-    while(SW1_Read());
-    BatteryLed_Write(1);
     vTaskDelay(1000);
-    BatteryLed_Write(0);
     
-    motor_forward(100, 0);
+    motor_forward(10, 0);
     
-    reflectance_digital(&dig);
+    reflectance_digital(&dig); //Reads the sensors
     
-        while(dig.L3 == 0 && dig.R3 == 0){
-            
-        reflectance_digital(&dig);
-            
+
+    
+    while(true){
+    on_white = 1;
+    while(on_white){
+        reflectance_digital(&dig);//use always inside a while loop  
+        on_white = dig.L3 == 0 && dig.R3 == 0;
+        //If stopped before the line
     }
-    black = true;
-    while(black)
-    {
+    
+    
+    black = 1;
+    while(black){
         reflectance_digital(&dig);
         black = dig.L3 || dig.R3;
+        //If stopped after the line
     }
+    }
+    
     count++;
     motor_forward(0,0);
-    printf("Count is: %d \n", count);
+    printf("the count is: %d", count);
+    
     IR_wait();
     motor_forward(10,0);
-    
-        while(true){
-        vTaskDelay(100);
-        }
+
     }
+    
     
 
 #endif
 
-#if 0
-    
-      void zmain(void)
-    {
 
-    struct sensors_ dig;
-    _Bool black = 0;
-    int count = 0;
-    
-    motor_start();
-    IR_Start();
-    reflectance_start();
-    reflectance_set_threshold(14000, 9000, 11000, 11000, 9000, 14000); // set center sensor threshold to 11000 and others to 9000
-    
-    while(SW1_Read());
-    BatteryLed_Write(1);
-    vTaskDelay(1000);
-    BatteryLed_Write(0);
-    
-    motor_forward(100, 0);
-    
-    reflectance_digital(&dig);
-    
-        while(dig.L3 == 0 && dig.R3 == 0){
-            
-        reflectance_digital(&dig);
-            
-    }
-    black = true;
-    while(black)
-    {
-        reflectance_digital(&dig);
-        black = dig.L3 || dig.R3;
-    }
-
-        count++;
-        motor_forward(0,0);
-        printf("Count is: %d \n", count);
-        IR_wait();
-        
-        while(count < 5)
-        motor_forward(10,0);
- 
-
-    
-        while(true){
-        vTaskDelay(100);
-        }
-    
-    }
-
-#endif
-
-#if 1 //Week3 Assignment 1
+#if 1 
     void zmain(void)
     {
-    
+        #define COUNT 5;
         struct sensors_ normal;
         struct sensors_ sensors;
+        
         bool line = false;
         bool done = false;
         int count = 0;
         
         motor_start();
-        printf("WRUUUM!");
+        printf("Motor start\n");
         reflectance_start();
         motor_forward(0,0);
         IR_Start();
-        IR_flush();
         
         while(SW1_Read());
-        
+        BatteryLed_Write(1);
         vTaskDelay(1000);
+        BatteryLed_Write(0);
+        
+        motor_forward(10,100);
         
         while(true)
         {
@@ -252,35 +211,44 @@ int random_number(int min, int max)
             reflectance_digital(&sensors);
             
             bool is_on_track = sensors.L1 && sensors.R1;
-            bool is_on_line = sensors.L3 && sensors.L2 && sensors.R2 && sensors.L2;
+            bool on_intersection = sensors.L3 && sensors.L2 && sensors.R2 && sensors.L2;
             
-            printf("%d", count);
+            printf("The count is: %d\n", count);
+            
             
             if(is_on_track && !done)
             {
                 motor_forward(10,0);
             }
-            if(is_on_line)
+            if(on_intersection)
             {
                 line = true;
             }
-            if(!is_on_line && line)
+            if(!on_intersection && line)
             {
                 count++;
                 line = false;
             }
-            if(count == 1)
+            if(count == 2)
+            {
+                motor_forward(0,100);
+                printf("Waiting IR signal\n");
+                IR_wait();
+                printf("IR signal recieved. Turning left...\n");
+                motor_turn(0, 50, 10000);
+                
+                
+                
+            }
+            if (count == 3)
             {
                 motor_forward(0,0);
-                IR_wait();
-
-                motor_forward(0,0);
-                count++;
+                done = true;
             }
-
-           
         }                   
     }
+    
+
 
     
 #endif
