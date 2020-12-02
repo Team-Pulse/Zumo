@@ -46,7 +46,12 @@ void zmain(void)
     
 #endif
 
-#if 0
+#if 1
+// Week 5 Assignment 2
+void zmain(void)
+{
+    week5_assignment2();
+}
 
     
 #endif

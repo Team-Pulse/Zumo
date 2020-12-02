@@ -181,7 +181,7 @@ int random_number(int min, int max)
 #endif
 
 
-#if 1 
+#if 0 
     void zmain(void)
     {
         #define COUNT 5;
