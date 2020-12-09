@@ -181,13 +181,11 @@ int random_number(int min, int max)
 #endif
 
 
-<<<<<<< HEAD
-#if 0
- void zmain(void)
-=======
+
+
 #if 0 
     void zmain(void)
->>>>>>> 26fed5a00b24af0f7e680ab202e8e4af36079052
+
     {
         
         struct sensors_ normal;
@@ -347,8 +345,9 @@ int random_number(int min, int max)
 #endif
 
 #if 0
-    #define TURNSPEED 100;
     
+    
+    int getRefValues (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);   
     void line_follower(struct sensors_ *sensors);
     
     void zmain (void)
@@ -481,5 +480,159 @@ void tank_turn_left(uint8 speed,uint32 delay){
 
 }
 
+
     
+#endif
+
+
+#if 1
+
+
+#define ON 			1
+#define LED_ON 		1
+#define FIRST_LINE 	1 
+#define SECOND_LINE 2
+#define THIRD_LINE 	3
+#define FOURTH_LINE 4
+#define FIFTH_LINE  5
+
+
+    void follow_the_line(struct sensors_ *sensors);
+	int reflectanceValues (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);
+    
+    void Week4_assignment3 (void)
+{
+    
+    int lines = 0;
+    struct sensors_ sensors;
+    motor_start();
+    reflectance_start();
+    IR_Start();
+    
+    //Switching the LED on
+        BatteryLed_Write(LED_ON);
+        printf("LED status: ON\n");
+        printf("Press the blue LED button\n");
+        while(SW1_Read() == ON);
+        BatteryLed_Write(0);
+        vTaskDelay(1000);
+        //stop on the last intersection
+        while(lines < FIFTH_LINE)
+        {
+                follow_the_line(&sensors);
+                lines++;
+                //Wait for the signal on the first intersection
+                if(lines == FIRST_LINE)
+                {
+                    printf("Press the IR button\n");
+                    IR_flush();
+                    IR_wait();
+                    
+                } else if(lines == SECOND_LINE)
+                  {
+                    while(!reflectanceValues(&sensors,0,0,1,1,0,0))
+                    {
+                     printf("Turning left on second line");
+                     motor_turn(10,200,10);
+                     reflectance_digital(&sensors);
+                    }
+                    
+                  }else if(lines == THIRD_LINE)
+                   {
+                    while(!reflectanceValues(&sensors, 0,0,1,1,0,0))
+                    {
+                        printf("Turning right on third line");
+                     motor_turn(200,10,10);
+                     reflectance_digital(&sensors);
+                    }
+                   }else if(lines == FOURTH_LINE)
+                    {
+                    while(!reflectanceValues(&sensors, 0,0,1,1,0,0))
+                    {
+                     printf("Turning right on fourth Line");
+                     motor_turn(200,10,10);
+                     reflectance_digital(&sensors);
+                    }
+                    }
+        }
+
+            
+            printf("Shut down");
+            motor_stop();
+            
+            
+
+}
+
+int reflectanceValues (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3){
+    if (sensors->L1 == L1 && sensors->L2 == L2 && sensors->L3 == L3 && sensors->R1 == R1 && sensors->R2 == R2 &&sensors->R3 == R3 )
+    {
+        return 1;
+        
+    }else
+    {
+        return 0;
+    }
+
+}
+
+void follow_the_line(struct sensors_ *sensors)
+{ 
+     reflectance_digital(sensors);
+   //Going through the intersection
+    while(reflectanceValues(sensors, 1, 1,1,1,1,1))
+    {
+        motor_forward(100,10);
+        reflectance_digital(sensors);
+    }
+
+
+    while(!reflectanceValues(sensors, 1, 1, 1, 1, 1, 1))
+    {
+        //Left Turn
+        while(sensors->R2 == 0 && sensors->L2 == 1)
+        {
+            tank_turn_left(255,1);
+            reflectance_digital(sensors);
+        }
+        //Right Turn
+        while(sensors->R2 == 1 && sensors->L2 == 0)
+        {
+            tank_turn_right(255, 1);
+            reflectance_digital(sensors);
+        }
+        
+        //Left turn over 90 degrees
+        while(sensors->R2 == 1 && sensors->R3 == 0 && sensors->L2 == 1 && sensors->L3 == 1)
+        {
+            tank_turn_left(255, 1);
+            reflectance_digital(sensors);
+        }
+        //Right turn over 90 degrees
+         while(sensors->R2 == 1 && sensors->R3 == 1 && sensors->L2 == 1 && sensors->L3 == 0)
+        {
+            tank_turn_right(255, 1);
+            reflectance_digital(sensors);
+        }
+        motor_forward(200, 10);
+        reflectance_digital(sensors);
+    }
+//Stopping the motors
+    motor_forward(0,0);
+}
+
+
+
+//These functions allow to make a tankturn either left or right:
+//200 speed 262 delay is 90 degrees
+void tank_turn_right(uint8 speed,uint32 delay){
+//   SetMotors(0,0, l_speed, r_speed, delay);
+    SetMotors(0,1, speed, speed, delay);
+}
+void tank_turn_left(uint8 speed,uint32 delay){
+//   SetMotors(0,0, l_speed, r_speed, delay);
+    SetMotors(1,0, speed, speed, delay);
+
+}
+
 #endif

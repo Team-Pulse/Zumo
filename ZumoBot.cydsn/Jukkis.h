@@ -35,7 +35,6 @@ void JukkisPrint(void);
 void Wee3_Assignment1(void);
 void week3_assignmen2(void);
 void week3_assignment3(void);
-void assignment_week43();
 
 void week5_assignment1(void);
 

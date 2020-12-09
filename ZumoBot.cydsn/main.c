@@ -42,7 +42,7 @@
     
 #endif
 
-#if 1
+#if 0
 // Week 5 Assignment 2
 void zmain(void)
 {
