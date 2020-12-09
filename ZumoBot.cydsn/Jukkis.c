@@ -347,7 +347,8 @@ int random_number(int min, int max)
 
 
 
-#if 0
+#if 1
+    
     int reflactance_values (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);   
     void follow_the_line(struct sensors_ *sensors);
     
