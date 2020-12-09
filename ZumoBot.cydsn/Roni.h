@@ -33,6 +33,6 @@ void RoniPrint(void);
 
 void week4_assignment2(void);
 
-void week4_assignment3(void);
+void week5_assignment2(void);
 
 /* [] END OF FILE */

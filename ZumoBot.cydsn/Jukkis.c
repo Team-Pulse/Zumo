@@ -181,8 +181,13 @@ int random_number(int min, int max)
 #endif
 
 
+<<<<<<< HEAD
 #if 0
  void zmain(void)
+=======
+#if 0 
+    void zmain(void)
+>>>>>>> 26fed5a00b24af0f7e680ab202e8e4af36079052
     {
         
         struct sensors_ normal;
