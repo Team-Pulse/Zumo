@@ -32,10 +32,16 @@
 #include <time.h> 
 
 void JukkisPrint(void);
+void Wee3_Assignment1(void);
+void week3_assignmen2(void);
+void week3_assignment3(void);
+
+void week5_assignment1(void);
 
 
 void tank_turn(uint8 l_speed, uint8 r_speed, uint32 delay);
-
+void tank_turn_right(uint8 speed,uint32 delay);
+void tank_turn_left(uint8 speed,uint32 delay);
 int random_number(int min, int max);  
 void follow_the_line(struct sensors_ *sensors);
 int reflectanceValues (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);
