@@ -38,11 +38,7 @@
 */
 
 #if 0
-// Week 4 Assignment 2
-void zmain(void)
-{
-    week4_assignment2();
-}
+
     
 #endif
 
