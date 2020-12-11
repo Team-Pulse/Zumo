@@ -599,6 +599,14 @@ void follow_the_line(struct sensors_ *sensors)
             reflectance_digital(sensors);
         }
         
+        while(sensors->R1 == 0 && sensors->L1 == 0)
+        {
+            TickType_t stop_time = xTaskGetTickCount();       
+            print_mqtt(STOP, "%d", stop_time); 
+            
+        }
+        
+        
         motor_forward(200, 10);
         reflectance_digital(sensors);
     }
