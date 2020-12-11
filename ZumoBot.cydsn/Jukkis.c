@@ -183,7 +183,7 @@ int random_number(int min, int max)
 
 
 
-#if 0 
+#if 0 //week4_assignment2
     void zmain(void)
 
     {
@@ -215,7 +215,7 @@ int random_number(int min, int max)
             reflectance_digital(&sensors);
             
             bool is_on_track = sensors.L1 && sensors.R1;
-            bool on_intersection = sensors.L3 && sensors.L2 && sensors.R2 && sensors.R3;// JOE: why check L2 twice? Did you mean R3
+            bool on_intersection = sensors.L3 && sensors.L2 && sensors.R2 && sensors.R3;
             
             
             printf("The count is: %d\n", count);
@@ -259,34 +259,7 @@ int random_number(int min, int max)
 
     
 #endif
-    
-#if 0 // WEEK5:Assignment1
-    
-    
-    #define TOPIC "<robot serial number>/button."
- void week5_assignment1(void)
-    {
-        while(true)
-        {
-        vTaskDelay(200);
-        TickType_t interval_1 = xTaskGetTickCount();
-        printf("\nPress the button\n");
-        while(SW1_Read());      
-        print_mqtt(TOPIC, "TaskGetTickCount(): %d milliseconds", interval_1); 
-        
-        while(!SW1_Read());
-        }
-        while(true)
-            {
-                vTaskDelay(100);            
-            }
-    }
-    
-    
 
-
-    
-#endif
     
 #if 0 // Project
     
@@ -347,14 +320,15 @@ int random_number(int min, int max)
 
 
 
-#if 0
+#if 0 //Week4_Assignment3
     int reflactance_values (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);   
     void follow_the_line(struct sensors_ *sensors);
     
     void zmain (void)
 {
-     //variables declaration and engine launch
+    
     int intersection = 0;
+    
     struct sensors_ sensors;
     motor_start();
     reflectance_start();
@@ -481,3 +455,145 @@ void tank_turn_left(uint8 speed,uint32 delay){
 }
 #endif    
 
+    
+#if 0 // WEEK5:Assignment1
+    
+    
+    #define TOPIC "<robot serial number>/button."
+ void week5_assignment1(void)
+    {
+        while(true)
+        {
+        vTaskDelay(200);
+        TickType_t interval_1 = xTaskGetTickCount();
+        printf("\nPress the button\n");
+        while(SW1_Read());      
+        print_mqtt(TOPIC, "TaskGetTickCount(): %d milliseconds", interval_1); 
+        
+        while(!SW1_Read());
+        }
+        while(true)
+            {
+                vTaskDelay(100);            
+            }
+    }
+    
+    
+
+
+    
+#endif
+    
+#if 1 //Line_follower Project Assignment
+    
+    
+    int reflactance_values (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);   
+    void follow_the_line(struct sensors_ *sensors);
+    
+    void zmain (void)
+{
+    
+    int intersection = 0;
+    
+    struct sensors_ sensors;
+    motor_start();
+    reflectance_start();
+    IR_Start();
+    
+    //Switching the LED on
+        BatteryLed_Write(1);
+        //Starting the function, when the button is pressed
+        while(SW1_Read() == 1);
+        BatteryLed_Write(0);
+        vTaskDelay(1000);
+        //stop on the last line
+        while(intersection <= 3)
+        {
+                follow_the_line(&sensors);
+                intersection++;
+                //Wait for the signal on the first line
+                if(intersection == 1)
+                {
+                    IR_flush();
+                    IR_wait();
+                    
+                } else if(intersection == 2)
+                  {
+                     while(reflactance_values (&sensors, 1, 1,1,1,1,1))
+                     {
+                     motor_forward(100,10);
+                     reflectance_digital(&sensors);
+                     }                    
+                  }else if(intersection == 3)
+                   {
+                    while(!reflactance_values(&sensors, 0,0,1,1,0,0))
+                    {
+                     
+                     reflectance_digital(&sensors);
+                    }
+                    }
+                
+        }
+
+            
+            
+            
+
+}
+
+int reflactance_values  (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3)
+{
+    if (sensors->L1 == L1 && sensors->L2 == L2 && sensors->L3 == L3 && sensors->R1 == R1 && sensors->R2 == R2 &&sensors->R3 == R3 )
+    {
+   
+        return 1;
+    }else
+    {
+    
+        return 0;
+    }
+
+}
+
+void follow_the_line(struct sensors_ *sensors)
+{ 
+     reflectance_digital(sensors);
+   //Going through the intersection
+    while(reflactance_values (sensors, 1, 1,1,1,1,1))
+    {
+        motor_forward(100,10);
+        reflectance_digital(sensors);
+    }
+
+
+    while(!reflactance_values (sensors, 1, 1, 1, 1, 1, 1))
+    {
+        //Left Turn
+        while(sensors->R2 == 0 && sensors->L2 == 1)
+        {
+            tank_turn_left(255,1);
+            reflectance_digital(sensors);
+        }
+        //Right Turn
+        while(sensors->R2 == 1 && sensors->L2 == 0)
+        {
+            tank_turn_right(255, 1);
+            reflectance_digital(sensors);
+        }
+        
+        motor_forward(200, 10);
+        reflectance_digital(sensors);
+    }
+
+    motor_forward(0,0);
+}
+
+
+void tank_turn_right(uint8 speed,uint32 delay){
+    SetMotors(0,1, speed, speed, delay);
+}
+void tank_turn_left(uint8 speed,uint32 delay){
+    SetMotors(1,0, speed, speed, delay);
+
+}
+#endif
