@@ -42,7 +42,7 @@ void roopePrint(void)
 
 #if 0
 //IR receiverm - how to wait for IR remote commands
-void zmain(void)
+void testausta(void)
 {
     IR_Start();
     motor_start();
@@ -76,6 +76,66 @@ void zmain(void)
         motor_forward(10, 4000); 
         motor_forward(0, 0);      
     }    
- }   
+ }
+
+void week4assignment1(void)
+{
+    struct sensors_ sensors_raw;
+    struct sensors_ sensors;
+    int current_line = 0;
+    bool line = false;
+    bool done = false;
+    
+    motor_start();
+    printf("Motors started.\n");
+    reflectance_start();
+    motor_forward(0, 0);
+    IR_start();
+    IR_flush();
+    
+    while(SW1_Read());
+    
+    vTaskDelay(5000);
+    
+    while(true)
+    {
+        reflectance_read(&sensors_raw);
+        reflectance_digital(&sensors);
+        
+        bool is_on_track = sensors.L1 && sensors.R1;
+        bool is_on_line = sensors.L3 && sensors.L2 && sensors.R2 && sensors.R3;
+        
+        prinf("%d", current_line);
+        
+        if(is_on_track && !done)
+        {
+            motor_forward(10, 0);
+        }
+        
+        if(is_on_line)
+        {
+            line = true;
+        }
+        
+        if(!is_on_line && line)
+        {
+            current_line++;
+            line = false;
+        }
+        
+        if(current_line == 1)
+        {
+            motor_forward(0, 0);
+            IR_wait();
+            motor_forward(10, 0);
+            current_line++;
+        }
+        
+        if(current_line == 6)
+        {
+            motor_forward(0, 0);
+            done = true;
+        }
+}    
 #endif
 /* [] END OF FILE */
