@@ -486,6 +486,12 @@ void tank_turn_left(uint8 speed,uint32 delay){
     
 #if 1 //Line_follower Project Assignment
     
+    #define READY "Zumo04/ready"
+    #define START "Zumo04/start"
+    #define STOP "Zumo04/stop"
+    #define TIME "Zumo04/time"
+    #define MISS "Zumo04/miss"
+    
     
     int reflactance_values (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);   
     void follow_the_line(struct sensors_ *sensors);
@@ -494,6 +500,7 @@ void tank_turn_left(uint8 speed,uint32 delay){
 {
     
     int intersection = 0;
+    
     
     struct sensors_ sensors;
     motor_start();
@@ -504,6 +511,10 @@ void tank_turn_left(uint8 speed,uint32 delay){
         BatteryLed_Write(1);
         //Starting the function, when the button is pressed
         while(SW1_Read() == 1);
+        TickType_t start_time = xTaskGetTickCount();
+        
+        
+        print_mqtt(START, "%d", start_time);
         BatteryLed_Write(0);
         vTaskDelay(1000);
         //stop on the last line
@@ -514,7 +525,8 @@ void tank_turn_left(uint8 speed,uint32 delay){
                 //Wait for the signal on the first line
                 if(intersection == 1)
                 {
-                    IR_flush();
+                    print_mqtt(READY, "line");
+                    IR_flush();                 
                     IR_wait();
                     
                 } else if(intersection == 2)
@@ -526,8 +538,15 @@ void tank_turn_left(uint8 speed,uint32 delay){
                      }                    
                   }else if(intersection == 3)
                    {
+                    
+                    TickType_t stop_time = xTaskGetTickCount();       
+                    print_mqtt(STOP, "%d", stop_time); 
+                    
+                    TickType_t run_time = stop_time - start_time;
+                    print_mqtt(TIME, "%d", run_time);
                     while(!reflactance_values(&sensors, 0,0,1,1,0,0))
                     {
+                     
                      
                      reflectance_digital(&sensors);
                     }
@@ -535,8 +554,7 @@ void tank_turn_left(uint8 speed,uint32 delay){
                 
         }
 
-            
-            
+        
             
 
 }
@@ -558,7 +576,7 @@ int reflactance_values  (struct sensors_ *sensors, int L3, int L2, int L1, int R
 void follow_the_line(struct sensors_ *sensors)
 { 
      reflectance_digital(sensors);
-   //Going through the intersection
+   //Drives through
     while(reflactance_values (sensors, 1, 1,1,1,1,1))
     {
         motor_forward(100,10);
@@ -568,13 +586,13 @@ void follow_the_line(struct sensors_ *sensors)
 
     while(!reflactance_values (sensors, 1, 1, 1, 1, 1, 1))
     {
-        //Left Turn
+        //Turns left
         while(sensors->R2 == 0 && sensors->L2 == 1)
         {
             tank_turn_left(255,1);
             reflectance_digital(sensors);
         }
-        //Right Turn
+        //Turns Right
         while(sensors->R2 == 1 && sensors->L2 == 0)
         {
             tank_turn_right(255, 1);
