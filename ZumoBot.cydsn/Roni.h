@@ -35,4 +35,6 @@ void week4_assignment2(void);
 
 void week5_assignment2(void);
 
+void sumo_wrestling(void);
+
 /* [] END OF FILE */

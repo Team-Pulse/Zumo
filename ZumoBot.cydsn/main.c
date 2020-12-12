@@ -46,14 +46,22 @@ void zmain(void)
     
 #endif
 
-#if 1
+#if 0
 // Week 5 Assignment 2
 void zmain(void)
 {
     week5_assignment2();
 }
-
     
+#endif
+
+#if 1
+// Sumo wrestling
+void zmain(void)
+{
+    sumo_wrestling();
+}
+
 #endif
 
 #if 0

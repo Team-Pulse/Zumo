@@ -102,4 +102,104 @@ void week5_assignment2(void)
     }
 }
 
+int random_number(int min, int max)
+{ 
+    int rand();
+    int distance, anyRandom, x;
+    distance = max-min;
+    anyRandom = rand();
+
+    x = anyRandom % distance;
+    return (x+min);
+}
+
+#define READY "Zumo04/ready"
+#define START "Zumo04/start"
+#define OBSTACLE "Zumo04/obstacle"
+#define STOP "Zumo04/stop"
+#define TIME "Zumo04/time"
+
+// Sumo wrestling
+void sumo_wrestling (void)
+{
+    reflectance_start();
+    reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000);
+    IR_Start();
+    IR_flush();
+    Ultra_Start();
+    motor_start();
+    struct sensors_ dig;
+    reflectance_digital(&dig);
+    int rand();
+    
+    while (dig.L1 == 0 && dig.R1 == 0 && dig.L3 == 0 && dig.R3 == 0)
+        {
+            motor_forward(80,0);
+            reflectance_digital(&dig);
+        }
+        
+    motor_stop();
+    print_mqtt(READY, "zumo");
+    IR_wait();
+    
+    TickType_t startTime = xTaskGetTickCount();
+    print_mqtt(START, "%d", startTime);
+   
+    motor_start();
+    motor_backward(80,600);
+    
+    while (SW1_Read())
+    {
+        reflectance_digital(&dig);
+        int distance = Ultra_GetDistance();
+        motor_forward(80,0);
+        
+        if (dig.L1 == 1 || dig.R1 == 1 || dig.L3 == 1 || dig.R3 == 1)
+        {
+            TickType_t obstacleTime = xTaskGetTickCount();
+            print_mqtt(OBSTACLE, "%d", obstacleTime);
+            motor_forward(0,0);
+            motor_backward(80,750);
+            
+            int direction = rand() % 2;
+            
+            if (direction == 0)
+            {
+                motor_turn(random_number(70,120),30,700);
+            }
+            else
+            {
+                motor_turn(30,random_number(70,120),700);
+            }
+        }
+        if (distance < 3)
+        {
+            TickType_t obstacleTime = xTaskGetTickCount();
+            print_mqtt(OBSTACLE, "%d", obstacleTime);
+            motor_forward(0,0);
+            motor_backward(80,750);
+            
+            int direction = rand() % 2;
+            
+            if (direction == 0)
+            {
+                motor_turn(random_number(70,120),30,700);
+            }
+            else
+            {
+                motor_turn(30,random_number(70,120),700);
+            }
+        }
+    }
+    
+    motor_stop();
+    
+    TickType_t stopTime = xTaskGetTickCount();
+    print_mqtt(STOP, "%d", stopTime);
+    
+    TickType_t runTime = stopTime - startTime;
+    print_mqtt(TIME, "%d", runTime);
+    
+}
+
 #endif
