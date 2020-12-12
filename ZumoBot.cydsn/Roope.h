@@ -31,4 +31,7 @@
 
 void roopePrint(void);
 
+void testausta(void);
+
+void week4assingment1(void);
 /* [] END OF FILE */
