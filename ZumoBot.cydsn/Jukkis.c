@@ -580,7 +580,7 @@ int reflactance_values  (struct sensors_ *sensors, int L3, int L2, int L1, int R
 
 void follow_the_line(struct sensors_ *sensors)
 { 
-     TickType_t starting_time = 0;
+     TickType_t *starting_time = starting_time;
      bool on_track = true;     
      reflectance_digital(sensors);
    //Drives through
