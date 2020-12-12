@@ -124,61 +124,7 @@ int random_number(int min, int max)
 
 #endif
 
-#if 0
-    
-      void zmain(void)
-    {
 
-    struct sensors_ dig;
-    _Bool black = 0;
-    _Bool on_white = 0;
-    int count = 0;
-
-        
- 
-    
-    motor_start();
-    IR_Start();
-    reflectance_start();
-    reflectance_set_threshold(14000, 9000, 11000, 11000, 9000, 14000); // set center sensor threshold to 11000 and others to 9000
-    
-    vTaskDelay(1000);
-    
-    motor_forward(10, 0);
-    
-    reflectance_digital(&dig); //Reads the sensors
-    
-
-    
-    while(true){
-    on_white = 1;
-    while(on_white){
-        reflectance_digital(&dig);//use always inside a while loop  
-        on_white = dig.L3 == 0 && dig.R3 == 0;
-        //If stopped before the line
-    }
-    
-    
-    black = 1;
-    while(black){
-        reflectance_digital(&dig);
-        black = dig.L3 || dig.R3;
-        //If stopped after the line
-    }
-    }
-    
-    count++;
-    motor_forward(0,0);
-    printf("the count is: %d", count);
-    
-    IR_wait();
-    motor_forward(10,0);
-
-    }
-    
-    
-
-#endif
 
 
 
@@ -260,62 +206,6 @@ int random_number(int min, int max)
     
 #endif
 
-    
-#if 0 // Project
-    
-  void zmain(void)
-    {
-
-    struct sensors_ dig;
-    _Bool black = 0;
-    _Bool on_white = 0;
-    int count = 0;
-
-        
- 
-    
-    motor_start();
-    IR_Start();
-    reflectance_start();
-    reflectance_set_threshold(14000, 9000, 11000, 11000, 9000, 14000); // set center sensor threshold to 11000 and others to 9000
-    
-    vTaskDelay(1000);
-    
-    motor_forward(10, 0);
-    
-    reflectance_digital(&dig); //Reads the sensors
-    
-
-    
-    while(true){
-    on_white = 1;
-    while(on_white){
-        reflectance_digital(&dig);//use always inside a while loop  
-        on_white = dig.L3 == 0 && dig.R3 == 0;
-        //If stopped before the line
-    }
-    
-    
-    black = 1;
-    while(black){
-        reflectance_digital(&dig);
-        black = dig.L3 || dig.R3;
-        //If stopped after the line
-    }
-    }
-    
-    count++;
-    motor_forward(0,0);
-    printf("the count is: %d", count);
-    
-    IR_wait();
-    motor_forward(10,0);
-
-    }
-
-
-    
-#endif
 
 
 
@@ -523,17 +413,15 @@ void tank_turn_left(uint8 speed,uint32 delay){
         //stops on the last line
         while(intersection <= 3)
         {
-                
+              
                 follow_the_line(&sensors);
-
                 intersection++;
                 //Waits for the signal on the first line
                 if(intersection == 1)
                 {
                     print_mqtt(READY, "line");
                     IR_flush();                 
-                    IR_wait();
-                    
+                    IR_wait();                   
                 } else if(intersection == 2)
                   {
                      while(reflactance_values (&sensors, 1, 1,1,1,1,1))
@@ -543,24 +431,22 @@ void tank_turn_left(uint8 speed,uint32 delay){
                      }                    
                   }else if(intersection == 3)
                    {
+                    
                     //Prints the time in milliseconds when the robot has crossed the finish line from the begi
                     finishing_time = xTaskGetTickCount();       
                     print_mqtt(STOP, "%d", finishing_time); 
                     //prints the runtime what is difference of stoptime and starttime
                     run_time = finishing_time - starting_time;
                     print_mqtt(TIME, "%d", run_time);
-                    while(!reflactance_values(&sensors, 0,0,1,1,0,0))
-                    {
-                     
-                     
-                     reflectance_digital(&sensors);
-                    }
+                    
+                        while(!reflactance_values(&sensors, 0,0,1,1,0,0))
+                        {
+                            reflectance_digital(&sensors);
+                        
+                        }
                     }
                 
         }
-
-        
-            
 
 }
 
@@ -589,10 +475,7 @@ void follow_the_line(struct sensors_ *sensors)
         motor_forward(100,10);
         reflectance_digital(sensors);
         
-        
-        
     }
-
 
     while(!reflactance_values (sensors, 1, 1, 1, 1, 1, 1))
     {
@@ -602,8 +485,6 @@ void follow_the_line(struct sensors_ *sensors)
             
             tank_turn_left(255,1);
             reflectance_digital(sensors);
-
-            
             
         }
         //Turns Right when the robot's L2 sensor is off the track
@@ -625,31 +506,15 @@ void follow_the_line(struct sensors_ *sensors)
             on_track = true;
             print_mqtt(LINE, "%d", starting_time);
         }
-
         
         motor_forward(200, 10);
         reflectance_digital(sensors);       
     }
-    
-    
-
-
-    
         
     motor_forward(0,0);
-    
-
         
 }
-
-
-
-    
- 
-
-        
-
-
+     
 void tank_turn_right(uint8 speed,uint32 delay){
     SetMotors(0,1, speed, speed, delay);
 }
