@@ -51,11 +51,19 @@ void zmain(void)
     
 #endif
 
-#if 1
+#if 0
 // Sumo wrestling
 void zmain(void)
 {
     sumo_wrestling();
+}
+
+#endif
+
+#if 1
+void zmain(void)
+{
+    zumomaze();
 }
 
 #endif
