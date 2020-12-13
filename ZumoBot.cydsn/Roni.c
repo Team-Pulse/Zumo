@@ -9,7 +9,7 @@
  *
  * ========================================
 */
-#if 0
+#if 1
 #include "Roni.h"
 /* [] END OF FILE */
 
@@ -132,7 +132,7 @@ void sumo_wrestling (void)
     reflectance_digital(&dig);
     int rand();
     
-    while (dig.L1 == 0 && dig.R1 == 0 && dig.L3 == 0 && dig.R3 == 0)
+    while (dig.L3 == 0 && dig.R3 == 0)
         {
             motor_forward(80,0);
             reflectance_digital(&dig);
@@ -146,7 +146,7 @@ void sumo_wrestling (void)
     print_mqtt(START, "%d", startTime);
    
     motor_start();
-    motor_backward(80,600);
+    motor_forward(80,300);
     
     while (SW1_Read())
     {
@@ -156,8 +156,6 @@ void sumo_wrestling (void)
         
         if (dig.L1 == 1 || dig.R1 == 1 || dig.L3 == 1 || dig.R3 == 1)
         {
-            TickType_t obstacleTime = xTaskGetTickCount();
-            print_mqtt(OBSTACLE, "%d", obstacleTime);
             motor_forward(0,0);
             motor_backward(80,750);
             
@@ -165,14 +163,14 @@ void sumo_wrestling (void)
             
             if (direction == 0)
             {
-                motor_turn(random_number(70,120),30,700);
+                motor_turn(random_number(70,120),random_number(0,30),700);
             }
             else
             {
-                motor_turn(30,random_number(70,120),700);
+                motor_turn(random_number(0,30),random_number(70,120),700);
             }
         }
-        if (distance < 3)
+        if (distance < 5)
         {
             TickType_t obstacleTime = xTaskGetTickCount();
             print_mqtt(OBSTACLE, "%d", obstacleTime);

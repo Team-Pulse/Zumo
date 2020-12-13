@@ -484,7 +484,7 @@ void tank_turn_left(uint8 speed,uint32 delay){
     
 #endif
     
-#if 1 //Line_follower Project Assignment
+#if 0 //Line_follower Project Assignment
     
     #define READY "Zumo04/ready"
     #define START "Zumo04/start"
