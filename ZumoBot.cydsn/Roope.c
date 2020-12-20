@@ -40,7 +40,7 @@ void roopePrint(void)
 }
 #endif
 
-#if 0
+#if 1
 //IR receiverm - how to wait for IR remote commands
 void testausta(void)
 {
@@ -90,7 +90,7 @@ void week4assignment1(void)
     printf("Motors started.\n");
     reflectance_start();
     motor_forward(0, 0);
-    IR_start();
+    IR_Start();
     IR_flush();
     
     while(SW1_Read());
@@ -105,7 +105,7 @@ void week4assignment1(void)
         bool is_on_track = sensors.L1 && sensors.R1;
         bool is_on_line = sensors.L3 && sensors.L2 && sensors.R2 && sensors.R3;
         
-        prinf("%d", current_line);
+        printf("%d", current_line);
         
         if(is_on_track && !done)
         {
@@ -136,8 +136,14 @@ void week4assignment1(void)
             motor_forward(0, 0);
             done = true;
         }
+    }
 }
-    
+
+#define READY "Zumo04/ready"
+#define START "Zumo04/start"
+#define STOP "Zumo04/stop"
+#define TIME "Zumo04/time"
+
 void zumomaze(void)
 {
     struct sensors_ sensors_raw;
@@ -146,19 +152,32 @@ void zumomaze(void)
     bool line = false;
     bool done = false;
     Ultra_Start();
+    motor_start();
+    reflectance_start();
+    reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000);
+    reflectance_digital(&sensors);
+    IR_Start();
+    IR_flush();
+    int rand();
+    
+    vTaskDelay(1000);
+    
+    while (sensors.L3 == 0 && sensors.R3 == 0)
+    {
+        motor_forward(80, 0);
+        reflectance_digital(&sensors);
+    }
+    
+    motor_stop();
+    print_mqtt(READY, "maze");
+    IR_wait();
+    
+    TickType_t startTime = xTaskGetTickCount();
+    print_mqtt(START, "%d", startTime);
     
     motor_start();
-    printf("Motors started.\n");
-    reflectance_start();
-    motor_forward(0, 0);
-    IR_start();
-    IR_flush();
-    
-    while(SW1_Read());
-    
-    vTaskDelay(5000);
-    
-        
+    motor_forward(100,270);
+            
     while(true)
     {
         reflectance_read(&sensors_raw);
@@ -169,8 +188,6 @@ void zumomaze(void)
         
         int distance = Ultra_GetDistance();
         
-        prinf("%d", current_line);
-        
         if(is_on_track && !done)
         {
             motor_forward(10, 0);
@@ -180,20 +197,16 @@ void zumomaze(void)
         {
             motor_forward(0,0);
             vTaskDelay(400);
-            motor_backward(100,350);
+            motor_forward(100,350);
             
             int direction = rand() % 2; //0 for right and 1 for left
        
             if (direction == 0)
             {
-                print_mqtt(TURN, "Turning right.", direction);
-                vTaskDelay(400);
                 motor_turn(100,0,525);
             }
             else
             {
-                print_mqtt(TURN, "Turning left.", direction);
-                vTaskDelay(400);
                 motor_turn(0,100,525);
             }     
         }
@@ -211,6 +224,12 @@ void zumomaze(void)
         {
             motor_forward(0, 0);
             done = true;
+            
+            TickType_t stopTime = xTaskGetTickCount();
+            print_mqtt(STOP, "%d", stopTime);
+            
+            TickType_t runTime = stopTime - startTime;
+            print_mqtt(TIME, "%d", runTime);
         }
     }
 }
