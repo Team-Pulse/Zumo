@@ -498,4 +498,155 @@ void zmain(void)
  }   
 #endif
 
+#if 0 //Line_follower Project Assignment
+    
+    #define READY "Zumo04/ready"
+    #define START "Zumo04/start"
+    #define STOP "Zumo04/stop"
+    #define TIME "Zumo04/time"
+    #define MISS "Zumo04/miss"
+    #define LINE "Zumo04/line"
+    
+    
+    int reflactance_values (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);   
+    void track_status(struct sensors_ *sensors);
+
+    
+    void zmain (void)
+{
+    //Variables
+    int intersection = 0;
+    TickType_t starting_time = 0;
+    TickType_t finishing_time = 0;
+    TickType_t run_time;
+    //Starts the motors and system.
+    struct sensors_ sensors;
+    motor_start();
+    reflectance_start();
+    IR_Start();
+    
+        //Switches the LED on
+        BatteryLed_Write(1);
+        //Starts the function, when the button is pressed and prints the starting time in milliseconds
+        while(SW1_Read() == 1);
+        starting_time = xTaskGetTickCount();
+        print_mqtt(START, "%d", starting_time);
+        
+        BatteryLed_Write(0);
+        vTaskDelay(1000);
+        //stops on the last line
+        while(intersection <= 3)
+        {
+              
+                follow_the_line(&sensors);
+                intersection++;
+                //Waits for the signal on the first line
+                if(intersection == 1)
+                {
+                    print_mqtt(READY, "line");
+                    IR_flush();                 
+                    IR_wait();                   
+                } else if(intersection == 2)
+                  {
+                     while(reflactance_values (&sensors, 1, 1,1,1,1,1))
+                     {
+                     motor_forward(100,10);
+                     reflectance_digital(&sensors);
+                     }                    
+                  }else if(intersection == 3)
+                   {
+                    
+                    //Prints the time in milliseconds when the robot has crossed the finish line from the begi
+                    finishing_time = xTaskGetTickCount();       
+                    print_mqtt(STOP, "%d", finishing_time); 
+                    //prints the runtime what is difference of stoptime and starttime
+                    run_time = finishing_time - starting_time;
+                    print_mqtt(TIME, "%d", run_time);
+                    
+                        while(!reflactance_values(&sensors, 0,0,1,1,0,0))
+                        {
+                            reflectance_digital(&sensors);
+                        
+                        }
+                    }
+                
+        }
+
+}
+
+int reflactance_values  (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3)
+{
+    if (sensors->L1 == L1 && sensors->L2 == L2 && sensors->L3 == L3 && sensors->R1 == R1 && sensors->R2 == R2 &&sensors->R3 == R3 )
+    {
+   
+        return 1;
+    }else
+    {
+    
+        return 0;
+    }
+
+}
+
+void follow_the_line(struct sensors_ *sensors)
+{ 
+     TickType_t *starting_time = starting_time;
+     bool on_track = true;     
+     reflectance_digital(sensors);
+   //Drives through
+    while(reflactance_values (sensors, 1, 1,1,1,1,1))
+    {
+        motor_forward(100,10);
+        reflectance_digital(sensors);
+        
+    }
+
+    while(!reflactance_values (sensors, 1, 1, 1, 1, 1, 1))
+    {
+        //Turns left when the robot's R2 sensor is off the track
+        while(sensors->R2 == 0 && sensors->L2 == 1)
+        {
+            
+            tank_turn_left(255,1);
+            reflectance_digital(sensors);
+            
+        }
+        //Turns Right when the robot's L2 sensor is off the track
+        while(sensors->R2 == 1 && sensors->L2 == 0)
+        {
+            
+            tank_turn_right(255, 1);
+            reflectance_digital(sensors);                                                            
+        }
+        //Prints "zumo04/miss" when the robot's center sensors are off the track
+        if(on_track == true && reflactance_values(sensors, 0,0,0,0,0,0))
+        {
+            on_track = false;
+            print_mqtt(MISS, "%d", starting_time); 
+        }
+        //Prints "zumo04/line" when robot's center sensors are back on track
+        else if(on_track == false && !reflactance_values(sensors, 0,0,0,0,0,0))
+        {
+            on_track = true;
+            print_mqtt(LINE, "%d", starting_time);
+        }
+        
+        motor_forward(200, 10);
+        reflectance_digital(sensors);       
+    }
+        
+    motor_forward(0,0);
+        
+}
+     //turns right
+void tank_turn_right(uint8 speed,uint32 delay){
+    SetMotors(0,1, speed, speed, delay);
+}	//turns left
+void tank_turn_left(uint8 speed,uint32 delay){
+    SetMotors(1,0, speed, speed, delay);
+
+}
+#endif
+
+
 /* [] END OF FILE */
