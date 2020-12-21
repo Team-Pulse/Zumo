@@ -517,7 +517,7 @@ void zmain(void)
     
     
     int reflactance_values (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);   
-    void track_status(struct sensors_ *sensors);
+    void follow_the_line(struct sensors_ *sensors);
 
     
     void zmain (void)
