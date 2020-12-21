@@ -385,7 +385,7 @@ void tank_turn_left(uint8 speed,uint32 delay){
     
     
     int reflactance_values (struct sensors_ *sensors, int L3, int L2, int L1, int R1, int R2, int R3);   
-    void track_status(struct sensors_ *sensors);
+    void follow_the_line(struct sensors_ *sensors);
 
     
     void zmain (void)
@@ -514,10 +514,10 @@ void follow_the_line(struct sensors_ *sensors)
     motor_forward(0,0);
         
 }
-     
+     //turns right
 void tank_turn_right(uint8 speed,uint32 delay){
     SetMotors(0,1, speed, speed, delay);
-}
+}	//turns left
 void tank_turn_left(uint8 speed,uint32 delay){
     SetMotors(1,0, speed, speed, delay);
 
